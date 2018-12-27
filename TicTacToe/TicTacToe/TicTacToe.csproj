@@ -63,6 +63,7 @@
     <Compile Include="Helpers\PointHelper.cs" />
     <Compile Include="Infrastructure\EvaluationFunctionFactory.cs" />
     <Compile Include="Managers\Abstract\IEvaluationFunction.cs" />
+    <Compile Include="Managers\Abstract\IEvaluationFunctionFactory.cs" />
     <Compile Include="Managers\EvaluationFunction1.cs" />
     <Compile Include="Managers\FormManager.cs" />
     <Compile Include="Managers\GameManager.cs" />

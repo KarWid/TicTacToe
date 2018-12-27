@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TicTacToe.Enums;
+using TicTacToe.Infrastructure;
 using TicTacToe.Managers;
 using TicTacToe.Models;
 
@@ -88,9 +87,12 @@ namespace TicTacToe.Forms
                 Console.WriteLine("Board is null in Board Form");
             }
 
-            _gameManager = new GameManager(_gameMode, _rows, _columns, WIN_CONDITION, board.Length, X_FIRST);
+            var factory = new EvaluationFunctionFactory();
+
+            _gameManager = new GameManager(_gameMode, factory, _rows, _columns, WIN_CONDITION, board.Length, X_FIRST);
             _gameManager.EnableBtnsEventHandler += EnableButtons;
-            _gameManager.ChangeBtnTextEventHandler += ChangeButtonText; 
+            _gameManager.ChangeBtnTextEventHandler += ChangeButtonText;
+            _gameManager.EndGameMessagesEventHandler += GameManagerEndGameMessages;
         }
 
         private void Button_Click(object sender, EventArgs e)
@@ -142,6 +144,23 @@ namespace TicTacToe.Forms
         private void ChangeButtonText(object sender, ChangeBtnTextEventArgs e)
         {
             _board[e.Position.X, e.Position.Y].Text = e.Content;
+        }
+
+        private void GameManagerEndGameMessages(object sender, EventArgs e)
+        {
+            var message = (string)sender;
+            var result = MessageBox.Show(message);
+
+            if (result == DialogResult.OK)
+            {
+                End();
+            }
+        }
+
+        private void End()
+        {
+            FormManager.MainForm?.Show();
+            FormManager.ActualForm?.Close();
         }
     }
 }

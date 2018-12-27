@@ -20,8 +20,8 @@ namespace TicTacToe.Managers
 
             do
             {
-                x = rand.Next(0, Board.GetLength(1));
-                y = rand.Next(0, Board.GetLength(0));
+                x = rand.Next(0, Board.GetLength(0));
+                y = rand.Next(0, Board.GetLength(1));
             } while (Board[x, y] != 0);
 
             return new Point(x, y);

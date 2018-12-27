@@ -16,6 +16,7 @@ namespace TicTacToe.Managers
 
         public Point NextMove()
         {
+
             return _evaluationFunction.Calculate();
         }
     }

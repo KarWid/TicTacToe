@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
 using TicTacToe.Helpers;
 using TicTacToe.Enums;
 using TicTacToe.Models;
-using TicTacToe.Infrastructure;
+using TicTacToe.Managers.Abstract;
 
 namespace TicTacToe.Managers
 {
@@ -16,11 +15,15 @@ namespace TicTacToe.Managers
         private GameManagerBoard _gameManagerBoard;
         private PlayerManager _playerManager1;
         private PlayerManager _playerManager2;
+        private IEvaluationFunctionFactory _evaluationFunctionFactory;
+
 
         public event EventHandler<ChangeBtnTextEventArgs> ChangeBtnTextEventHandler;
         public event EventHandler EnableBtnsEventHandler;
+        public event EventHandler EndGameMessagesEventHandler;
 
-        public GameManager(GameModeType gameMode, int rows, int columns, int winCondition, int boardLength, bool xFirst)
+        public GameManager(GameModeType gameMode, IEvaluationFunctionFactory evalutaionFunctionFactory, 
+                           int rows, int columns, int winCondition, int boardLength, bool xFirst)
         {
             _rows = rows;
             _columns = columns;
@@ -32,40 +35,26 @@ namespace TicTacToe.Managers
             _boardLength = boardLength;
 
             _gameManagerBoard = new GameManagerBoard(rows, columns);
+            _evaluationFunctionFactory = evalutaionFunctionFactory;
 
             InitializePlayers(gameMode);
         }
 
-        public void Start()
+        public int Start()
         {
-            Move(_playerManager1.NextMove());
+            return Move(_playerManager1.NextMove());
         }
 
-        // to do
-        public bool Move(Point position)
+        public int Move(Point position)
         {
-            if (!position.IsValid(_rows, _columns)) return false;
-
-            DialogResult dialogResult;
+            if (!position.IsValid(_rows, _columns)) return -1;
 
             if (_gameManagerBoard.Board[position.X, position.Y] != 0)
             {
-                dialogResult = MessageBox.Show("You cant move here, because this field is busy\n" +
-                                               "Do you want to try again? If no, go back to the main view", 
-                                               "Bad move", MessageBoxButtons.YesNo);
-
-                if (dialogResult == DialogResult.Yes)
-                {
-                    return MoveIfComputer();
-                }
-                else
-                {
-                    return End();
-                }
+                throw new Exception("Bad move in game manager, position is busy");
             }
 
             ChangeBtnTextEventHandler?.Invoke(this, new ChangeBtnTextEventArgs(position, _xTurn ? "X" : "0"));
-
             _gameManagerBoard.Board[position.X, position.Y] = _firstPlayerMove ? 1 : 2;
 
             // if some1 win
@@ -75,38 +64,32 @@ namespace TicTacToe.Managers
             {
                 case 1:
                 case 2:
-                    dialogResult = MessageBox.Show($"Game is over\nPlayer {winner} won the game!");
-                    if (dialogResult == DialogResult.OK) return End();
-                    break;
+                    EndGameMessagesEventHandler?.Invoke($"Game is over\nPlayer {winner} won the game!", null);
+                    return winner;
                 case 0:
-                    dialogResult = MessageBox.Show("Game is over\nNo one win the game");
-                    if (dialogResult == DialogResult.OK) return End();
-                    break;
+                    EndGameMessagesEventHandler?.Invoke("Game is over\nNo one win the game", null);
+                    return winner;
                 default:
                     break;
             }
 
-            ChangePlayer();
-
-            return true;
+            return ChangePlayer();
         }
 
         private void InitializePlayers(GameModeType gameMode)
         {
-            var function1 = EvaluationFunctionFactory.GetEvaluationFunction(1, _gameManagerBoard.Board);
-
             switch (gameMode)
             {
                 case GameModeType.PlayerVsPlayer:
                     break;
                 case GameModeType.PlayerVsComputer:
-                    _playerManager2 = new PlayerManager(EvaluationFunctionFactory.GetEvaluationFunction(1, _gameManagerBoard.Board),
+                    _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(1, _gameManagerBoard.Board),
                                                         _gameManagerBoard.Board);
                     break;
                 case GameModeType.ComputerVsComputer:
-                    _playerManager1 = new PlayerManager(EvaluationFunctionFactory.GetEvaluationFunction(1, _gameManagerBoard.Board),
+                    _playerManager1 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(1, _gameManagerBoard.Board),
                                                         _gameManagerBoard.Board);
-                    _playerManager2 = new PlayerManager(EvaluationFunctionFactory.GetEvaluationFunction(2, _gameManagerBoard.Board),
+                    _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(2, _gameManagerBoard.Board),
                                                         _gameManagerBoard.Board);
                     break;
                 default:
@@ -114,16 +97,16 @@ namespace TicTacToe.Managers
             }
         }
 
-        private void ChangePlayer()
+        private int ChangePlayer()
         {
             _xTurn = !_xTurn;
             _firstPlayerMove = !_firstPlayerMove;
             _moves++;
 
-            MoveIfComputer();
+            return MoveIfComputer();
         }
 
-        private bool MoveIfComputer()
+        private int MoveIfComputer()
         {
             switch (_gameMode)
             {
@@ -142,15 +125,7 @@ namespace TicTacToe.Managers
                     return Move(_playerManager2.NextMove());
             }
 
-            return false;
-        }
-
-        // to do
-        private bool End()
-        {
-            FormManager.MainForm?.Show();
-            FormManager.ActualForm?.Close();
-            return false;
+            return -1;
         }
     }
 }
