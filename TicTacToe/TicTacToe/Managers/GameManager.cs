@@ -17,10 +17,10 @@ namespace TicTacToe.Managers
         private PlayerManager _playerManager1;
         private PlayerManager _playerManager2;
 
-        public EventHandler ChangeBtnTextEventHandler;
+        public event EventHandler<ChangeBtnTextEventArgs> ChangeBtnTextEventHandler;
+        public event EventHandler EnableBtnsEventHandler;
 
-        public GameManager(GameModeType gameMode, int rows, int columns, 
-                           Button[,] board, int winCondition, bool xFirst)
+        public GameManager(GameModeType gameMode, int rows, int columns, int winCondition, int boardLength, bool xFirst)
         {
             _rows = rows;
             _columns = columns;
@@ -29,9 +29,9 @@ namespace TicTacToe.Managers
 
             _xTurn = xFirst;
             _firstPlayerMove = true;
-            _boardLength = board.Length;
+            _boardLength = boardLength;
 
-            _gameManagerBoard = new GameManagerBoard(rows, columns, board);
+            _gameManagerBoard = new GameManagerBoard(rows, columns);
 
             InitializePlayers(gameMode);
         }
@@ -41,15 +41,14 @@ namespace TicTacToe.Managers
             Move(_playerManager1.NextMove());
         }
 
+        // to do
         public bool Move(Point position)
         {
             if (!position.IsValid(_rows, _columns)) return false;
 
             DialogResult dialogResult;
 
-            var boardButton = _gameManagerBoard.BoardButtons[position.X, position.Y];
-            
-            if (!String.IsNullOrEmpty(boardButton.Text) || _gameManagerBoard.Board[position.X, position.Y] != 0)
+            if (_gameManagerBoard.Board[position.X, position.Y] != 0)
             {
                 dialogResult = MessageBox.Show("You cant move here, because this field is busy\n" +
                                                "Do you want to try again? If no, go back to the main view", 
@@ -66,6 +65,7 @@ namespace TicTacToe.Managers
             }
 
             ChangeBtnTextEventHandler?.Invoke(this, new ChangeBtnTextEventArgs(position, _xTurn ? "X" : "0"));
+
             _gameManagerBoard.Board[position.X, position.Y] = _firstPlayerMove ? 1 : 2;
 
             // if some1 win
@@ -123,23 +123,12 @@ namespace TicTacToe.Managers
             MoveIfComputer();
         }
 
-        private void EnableButtons(bool enable)
-        {
-            for (int row = 0; row < _rows; row++)
-            {
-                for (int column = 0; column < _columns; column++)
-                {
-                    _gameManagerBoard.BoardButtons[row, column].Enabled = enable;
-                }
-            }
-        }
-
         private bool MoveIfComputer()
         {
             switch (_gameMode)
             {
                 case GameModeType.PlayerVsComputer:
-                    EnableButtons(_firstPlayerMove);
+                    EnableBtnsEventHandler?.Invoke(_firstPlayerMove, null);
                     if (!_firstPlayerMove)
                     {
                         return Move(_playerManager2.NextMove());
@@ -156,6 +145,7 @@ namespace TicTacToe.Managers
             return false;
         }
 
+        // to do
         private bool End()
         {
             FormManager.MainForm?.Show();

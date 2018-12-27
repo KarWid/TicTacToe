@@ -67,6 +67,7 @@
     <Compile Include="Managers\FormManager.cs" />
     <Compile Include="Managers\GameManager.cs" />
     <Compile Include="Managers\PlayerManager.cs" />
+    <Compile Include="Models\ChangeBtnTextEventArgs.cs" />
     <Compile Include="Models\GameManagerBoard.cs" />
     <Compile Include="Models\GameMode.cs" />
     <Compile Include="Program.cs" />

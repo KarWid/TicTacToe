@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TicTacToe.Enums;
 using TicTacToe.Managers;
+using TicTacToe.Models;
 
 namespace TicTacToe.Forms
 {
@@ -87,7 +88,9 @@ namespace TicTacToe.Forms
                 Console.WriteLine("Board is null in Board Form");
             }
 
-            _gameManager = new GameManager(_gameMode, _rows, _columns, board, WIN_CONDITION, X_FIRST);
+            _gameManager = new GameManager(_gameMode, _rows, _columns, WIN_CONDITION, board.Length, X_FIRST);
+            _gameManager.EnableBtnsEventHandler += EnableButtons;
+            _gameManager.ChangeBtnTextEventHandler += ChangeButtonText; 
         }
 
         private void Button_Click(object sender, EventArgs e)
@@ -121,6 +124,24 @@ namespace TicTacToe.Forms
 
                 _gameManager.Start();
             }
+        }
+
+        private void EnableButtons(object sender, EventArgs e)
+        {
+            var enable = (bool)sender;
+
+            for (int row = 0; row < _rows; row++)
+            {
+                for (int column = 0; column < _columns; column++)
+                {
+                    _board[row, column].Enabled = enable;
+                }
+            }
+        }
+
+        private void ChangeButtonText(object sender, ChangeBtnTextEventArgs e)
+        {
+            _board[e.Position.X, e.Position.Y].Text = e.Content;
         }
     }
 }
