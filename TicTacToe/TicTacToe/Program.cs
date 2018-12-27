@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using TicTacToe.Forms;
+using TicTacToe.Managers;
 
 namespace TicTacToe
 {
@@ -16,7 +15,10 @@ namespace TicTacToe
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            var mainForm = new MainForm();
+            FormManager.MainForm = mainForm;
+
+            Application.Run(mainForm);
         }
     }
 }
