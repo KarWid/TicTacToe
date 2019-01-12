@@ -22,6 +22,8 @@ namespace TicTacToe.Managers
         private int _winCondition;
         private int _depthSearch;
 
+        private Random _rand;
+
         public PlayerManager(IEvaluationFunction evaluationFunction, int[,] board, int numberPlayer, int winCondition, int depthSearch)
         {
             _board = board;
@@ -31,6 +33,7 @@ namespace TicTacToe.Managers
             _columns = board.GetLength(1);
             _winCondition = winCondition;
             _depthSearch = depthSearch;
+            _rand = new Random();
         }
 
         public Point NextMove(int moves)
@@ -118,6 +121,7 @@ namespace TicTacToe.Managers
         private List<Point> GenerateMoves(int[,] board, int moves)
         {
             var result = new List<Point>();
+            var possibleMoves = new List<Point>();
 
             // If gameover, i.e., no next move
             var endGame = BoardHelper.IsEndGame(board, _winCondition, _rows, _columns, moves);
@@ -133,9 +137,18 @@ namespace TicTacToe.Managers
                 {
                     if (board[row, column] == 0)
                     {
-                        result.Add(new Point(row, column));
+                        possibleMoves.Add(new Point(row, column));
                     }
                 }
+            }
+
+            while (possibleMoves.Count > 0)
+            {
+                var index = _rand.Next(0, possibleMoves.Count);
+
+                var position = possibleMoves[index];
+                result.Add(position);
+                possibleMoves.RemoveAt(index);
             }
 
             return result;
