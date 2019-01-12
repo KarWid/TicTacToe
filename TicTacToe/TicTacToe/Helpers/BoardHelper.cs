@@ -1,4 +1,6 @@
-﻿namespace TicTacToe.Helpers
+﻿using TicTacToe.Enums;
+
+namespace TicTacToe.Helpers
 {
     public static class BoardHelper
     {
@@ -11,26 +13,26 @@
         /// <param name="rows"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public static int IsEndGame(int[,] board, int winCondition, int rows, int columns, int moves)
+        public static EndGameType IsEndGame(int[,] board, int winCondition, int rows, int columns, int moves)
         {
-            int result = CheckRows(board, winCondition, rows, columns);
-            if (result != -1) return result;
+            var result = CheckRows(board, winCondition, rows, columns);
+            if (result != EndGameType.NotEndYet) return result;
 
             result = CheckColumns(board, winCondition, rows, columns);
-            if (result != -1) return result;
+            if (result != EndGameType.NotEndYet) return result;
 
             result = CheckLeftToRightDownDiagonals(board, winCondition, rows, columns);
-            if (result != -1) return result;
+            if (result != EndGameType.NotEndYet) return result;
 
             result = CheckRightToLeftDownDiagonals(board, winCondition, rows, columns);
-            if (result != -1) return result;
+            if (result != EndGameType.NotEndYet) return result;
 
             if (moves == (board.Length - 1)) return 0;
 
-            return -1;
+            return EndGameType.NotEndYet;
         }
 
-        private static int CheckRows(int[,] board, int winCondition, int rows, int columns)
+        private static EndGameType CheckRows(int[,] board, int winCondition, int rows, int columns)
         {
             for (int row = 0; row < rows; row++)
             {
@@ -50,14 +52,17 @@
                         }
                     }
 
-                    if (compared) return value;
+                    if (compared)
+                    {
+                        return (EndGameType)value;
+                    }
                 }
             }
 
-            return -1;
+            return EndGameType.NotEndYet;
         }
 
-        private static int CheckColumns(int[,] board, int winCondition, int rows, int columns)
+        private static EndGameType CheckColumns(int[,] board, int winCondition, int rows, int columns)
         {
             for (int column = 0; column < columns; column++)
             {
@@ -77,53 +82,56 @@
                         }
                     }
 
-                    if (compared) return value;
+                    if (compared)
+                    {
+                        return (EndGameType)value;
+                    }
                 }
             }
 
-            return -1;
+            return EndGameType.NotEndYet;
         }
 
-        private static int CheckLeftToRightDownDiagonals(int[,] board, int winCondition, int rows, int columns)
+        private static EndGameType CheckLeftToRightDownDiagonals(int[,] board, int winCondition, int rows, int columns)
         {
-            int result = -1;
+            var result = EndGameType.NotEndYet;
 
             for (int row = rows - 1; row >=0; row--)
             {
                 result = CheckLeftToRightDownDiagonal(board, winCondition, rows, columns, row, 0);
-                if (result != -1) return result;
+                if (result != EndGameType.NotEndYet) return result;
             }
 
             for (int column = 0; column < columns; column++)
             {
                 result = CheckLeftToRightDownDiagonal(board, winCondition, rows, columns, 0, column);
-                if (result != -1) return result;
+                if (result != EndGameType.NotEndYet) return result;
             }
             
-            return result;
+            return EndGameType.NotEndYet;
         }
 
-        private static int CheckRightToLeftDownDiagonals(int[,] board, int winCondition, int rows, int columns)
+        private static EndGameType CheckRightToLeftDownDiagonals(int[,] board, int winCondition, int rows, int columns)
         {
-            int result = -1;
+            var result = EndGameType.NotEndYet;
             var lastColumn = columns - 1;
 
             for (int row = rows - 1; row >= 0; row--)
             {
                 result = CheckRightToLeftDownDiagonal(board, winCondition, rows, columns, row, lastColumn);
-                if (result != -1) return result;
+                if (result != EndGameType.NotEndYet) return result;
             }
 
             for (int column = lastColumn; column >= 0; column--)
             {
                 result = CheckRightToLeftDownDiagonal(board, winCondition, rows, columns, 0, column);
-                if (result != -1) return result;
+                if (result != EndGameType.NotEndYet) return result;
             }
 
             return result;
         }
 
-        private static int CheckLeftToRightDownDiagonal(int[,] board, int winCondition, int rows, int columns, int startRow, int startColumn)
+        private static EndGameType CheckLeftToRightDownDiagonal(int[,] board, int winCondition, int rows, int columns, int startRow, int startColumn)
         {
             int value = -1;
             bool compared = false;
@@ -145,13 +153,16 @@
                     }
                 }
 
-                if (compared) return value;
+                if (compared)
+                {
+                    return (EndGameType)value;
+                }
             }
 
-            return compared ? value : -1;
+            return compared ? (EndGameType)value : EndGameType.NotEndYet;
         }
 
-        private static int CheckRightToLeftDownDiagonal(int[,] board, int winCondition, int rows, int columns, int startRow, int startColumn)
+        private static EndGameType CheckRightToLeftDownDiagonal(int[,] board, int winCondition, int rows, int columns, int startRow, int startColumn)
         {
             int value = -1;
             bool compared = false;
@@ -173,10 +184,13 @@
                     }
                 }
 
-                if (compared) return value;
+                if (compared)
+                {
+                    return (EndGameType)value;
+                }
             }
 
-            return compared ? value : -1;
+            return compared ? (EndGameType)value : EndGameType.NotEndYet;
         }
     }
 }

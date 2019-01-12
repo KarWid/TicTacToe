@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using TicTacToe.Enums;
-using TicTacToe.Infrastructure;
+using TicTacToe.Infrastructure.EvaluationFunctions.Concrete;
 using TicTacToe.Managers;
 using TicTacToe.Models;
 
@@ -17,14 +17,14 @@ namespace TicTacToe.Forms
         private GameManager _gameManager;
         private GameModeType _gameMode;
 
-        private int _rows, _columns;
+        private int _rows, _columns, _depthSearch;
 
         public BoardForm()
         {
             InitializeComponent();
         }
 
-        public BoardForm(GameModeType gameMode, int rows, int columns)
+        public BoardForm(GameModeType gameMode, int rows, int columns, int depthSearch)
         {
             InitializeComponent();
 
@@ -33,6 +33,7 @@ namespace TicTacToe.Forms
             _gameMode = gameMode;
             _rows = rows;
             _columns = columns;
+            _depthSearch = depthSearch;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -89,7 +90,19 @@ namespace TicTacToe.Forms
 
             var factory = new EvaluationFunctionFactory();
 
-            _gameManager = new GameManager(_gameMode, factory, _rows, _columns, WIN_CONDITION, board.Length, X_FIRST);
+            var model = new GameManagerModel
+            {
+                GameMode = _gameMode,
+                EvalutaionFunctionFactory = factory,
+                Rows = _rows,
+                Columns = _columns,
+                WinCondition = WIN_CONDITION,
+                BoardLength = board.Length,
+                XFirst = X_FIRST,
+                DepthSearch = _depthSearch
+            };
+
+            _gameManager = new GameManager(model);
             _gameManager.EnableBtnsEventHandler += EnableButtons;
             _gameManager.ChangeBtnTextEventHandler += ChangeButtonText;
             _gameManager.EndGameMessagesEventHandler += GameManagerEndGameMessages;

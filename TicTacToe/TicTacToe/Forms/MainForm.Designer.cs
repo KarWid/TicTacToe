@@ -34,6 +34,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.RowsTb = new System.Windows.Forms.TextBox();
             this.ColumnsTb = new System.Windows.Forms.TextBox();
+            this.DepthSearchTb = new System.Windows.Forms.TextBox();
+            this.DepthSearchLbl = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // GameModeListBox
@@ -46,7 +48,7 @@
             // 
             // StartBtn
             // 
-            this.StartBtn.Location = new System.Drawing.Point(302, 153);
+            this.StartBtn.Location = new System.Drawing.Point(302, 180);
             this.StartBtn.Name = "StartBtn";
             this.StartBtn.Size = new System.Drawing.Size(152, 23);
             this.StartBtn.TabIndex = 1;
@@ -90,11 +92,31 @@
             this.ColumnsTb.TabIndex = 5;
             this.ColumnsTb.Text = "10";
             // 
+            // DepthSearchTb
+            // 
+            this.DepthSearchTb.Location = new System.Drawing.Point(354, 154);
+            this.DepthSearchTb.Name = "DepthSearchTb";
+            this.DepthSearchTb.Size = new System.Drawing.Size(100, 20);
+            this.DepthSearchTb.TabIndex = 7;
+            this.DepthSearchTb.Text = "2";
+            // 
+            // DepthSearchLbl
+            // 
+            this.DepthSearchLbl.AutoSize = true;
+            this.DepthSearchLbl.Location = new System.Drawing.Point(230, 154);
+            this.DepthSearchLbl.Name = "DepthSearchLbl";
+            this.DepthSearchLbl.Size = new System.Drawing.Size(119, 13);
+            this.DepthSearchLbl.TabIndex = 6;
+            this.DepthSearchLbl.Text = "Głębokość poszukiwań";
+            this.DepthSearchLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.DepthSearchTb);
+            this.Controls.Add(this.DepthSearchLbl);
             this.Controls.Add(this.ColumnsTb);
             this.Controls.Add(this.RowsTb);
             this.Controls.Add(this.label2);
@@ -116,6 +138,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox RowsTb;
         private System.Windows.Forms.TextBox ColumnsTb;
+        private System.Windows.Forms.TextBox DepthSearchTb;
+        private System.Windows.Forms.Label DepthSearchLbl;
     }
 }
 

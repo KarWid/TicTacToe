@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\EndGameType.cs" />
+    <Compile Include="Enums\EvaluationFunctionType.cs" />
     <Compile Include="Enums\GameModeType.cs" />
     <Compile Include="Forms\BoardForm.cs">
       <SubType>Form</SubType>
@@ -61,20 +63,23 @@
     </Compile>
     <Compile Include="Helpers\BoardHelper.cs" />
     <Compile Include="Helpers\PointHelper.cs" />
-    <Compile Include="Infrastructure\EvaluationFunctionFactory.cs" />
-    <Compile Include="Managers\Abstract\IEvaluationFunction.cs" />
-    <Compile Include="Managers\Abstract\IEvaluationFunctionFactory.cs" />
-    <Compile Include="Managers\EvaluationFunction1.cs" />
+    <Compile Include="Infrastructure\EvaluationFunctions\Concrete\EvaluationFunction2.cs" />
+    <Compile Include="Infrastructure\EvaluationFunctions\Concrete\EvaluationFunctionFactory.cs" />
+    <Compile Include="Infrastructure\EvaluationFunctions\Abstract\IEvaluationFunction.cs" />
+    <Compile Include="Infrastructure\EvaluationFunctions\Abstract\IEvaluationFunctionFactory.cs" />
+    <Compile Include="Infrastructure\EvaluationFunctions\Concrete\EvaluationFunction1.cs" />
     <Compile Include="Managers\FormManager.cs" />
     <Compile Include="Managers\GameManager.cs" />
     <Compile Include="Managers\PlayerManager.cs" />
     <Compile Include="Models\ChangeBtnTextEventArgs.cs" />
     <Compile Include="Models\GameManagerBoard.cs" />
+    <Compile Include="Models\GameManagerModel.cs" />
     <Compile Include="Models\GameMode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -60,10 +60,11 @@ namespace TicTacToe.Forms
                 gameModeType = _gameModes.Where(x => x.Name == gameModeName).FirstOrDefault().Type;
             }
 
-            int rows, columns;
+            int rows, columns, depthSearch;
 
             if (!Int32.TryParse(RowsTb.Text, out rows) || rows < MINIMUM_BOARD_SIZE) errorMessage += "Bad number of rows\n";
             if (!Int32.TryParse(ColumnsTb.Text, out columns) || columns < MINIMUM_BOARD_SIZE) errorMessage += "Bad number of columns";
+            if (!Int32.TryParse(DepthSearchTb.Text, out depthSearch) || depthSearch < 1) errorMessage += "Bad depth search";
 
             if (!String.IsNullOrEmpty(errorMessage))
             {
@@ -71,7 +72,7 @@ namespace TicTacToe.Forms
                 return;
             }
 
-            var board = new BoardForm(gameModeType, rows, columns);
+            var board = new BoardForm(gameModeType, rows, columns, depthSearch);
             board.Show();
 
             this.Hide();

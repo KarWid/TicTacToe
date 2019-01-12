@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacToe.Enums;
-using TicTacToe.Infrastructure;
+using TicTacToe.Infrastructure.EvaluationFunctions.Concrete;
 using TicTacToe.Managers;
+using TicTacToe.Models;
 
 namespace TicTacToe.Tests
 {
@@ -17,6 +17,18 @@ namespace TicTacToe.Tests
             var factory = new EvaluationFunctionFactory();
             var results = new Dictionary<int, int>();
 
+            var model = new GameManagerModel
+            {
+                GameMode = GameModeType.ComputerVsComputer,
+                EvalutaionFunctionFactory = factory,
+                Rows = 10,
+                Columns = 10,
+                WinCondition = 5,
+                BoardLength = 100,
+                XFirst = true,
+                DepthSearch = 3
+            };
+
             results.Add(-1, 0);
             results.Add(0, 0);
             results.Add(1, 0);
@@ -25,9 +37,9 @@ namespace TicTacToe.Tests
             // do actions
             for (int i = 0; i < 100; i++)
             {
-                GameManager gameManager = new GameManager(GameModeType.ComputerVsComputer, factory, 10, 10, 5, 100, true);
+                GameManager gameManager = new GameManager(model);
                 var result = gameManager.Start();
-                results[result]++;
+                results[(int)result]++;
             }
 
             string message = $"Liczba gier zakończonych błędem: {results[-1]}\n" +

@@ -3,7 +3,7 @@ using System.Drawing;
 using TicTacToe.Helpers;
 using TicTacToe.Enums;
 using TicTacToe.Models;
-using TicTacToe.Managers.Abstract;
+using TicTacToe.Infrastructure.EvaluationFunctions.Abstract;
 
 namespace TicTacToe.Managers
 {
@@ -17,37 +17,42 @@ namespace TicTacToe.Managers
         private PlayerManager _playerManager2;
         private IEvaluationFunctionFactory _evaluationFunctionFactory;
 
-
         public event EventHandler<ChangeBtnTextEventArgs> ChangeBtnTextEventHandler;
         public event EventHandler EnableBtnsEventHandler;
         public event EventHandler EndGameMessagesEventHandler;
 
-        public GameManager(GameModeType gameMode, IEvaluationFunctionFactory evalutaionFunctionFactory, 
-                           int rows, int columns, int winCondition, int boardLength, bool xFirst)
-        {
-            _rows = rows;
-            _columns = columns;
-            _winCondition = winCondition;
-            _gameMode = gameMode;
+        public int DepthSearch { get; private set; }
 
-            _xTurn = xFirst;
+        public GameManager(GameManagerModel model)
+        {
+            _rows = model.Rows;
+            _columns = model.Columns;
+            _winCondition = model.WinCondition;
+            _gameMode = model.GameMode;
+
+            _xTurn = model.XFirst;
             _firstPlayerMove = true;
-            _boardLength = boardLength;
+            _boardLength = model.BoardLength;
 
-            _gameManagerBoard = new GameManagerBoard(rows, columns);
-            _evaluationFunctionFactory = evalutaionFunctionFactory;
+            _gameManagerBoard = new GameManagerBoard(model.Rows, model.Columns);
+            _evaluationFunctionFactory = model.EvalutaionFunctionFactory;
 
-            InitializePlayers(gameMode);
+            DepthSearch = model.DepthSearch;
+
+            InitializePlayers(model.GameMode);
         }
 
-        public int Start()
+        public EndGameType Start()
         {
-            return Move(_playerManager1.NextMove());
+            return Move(_playerManager1.NextMove(_moves));
         }
 
-        public int Move(Point position)
+        public EndGameType Move(Point position)
         {
-            if (!position.IsValid(_rows, _columns)) return -1;
+            if (!position.IsValid(_rows, _columns))
+            {
+                return EndGameType.NotEndYet;
+            }
 
             if (_gameManagerBoard.Board[position.X, position.Y] != 0)
             {
@@ -62,11 +67,11 @@ namespace TicTacToe.Managers
 
             switch (winner)
             {
-                case 1:
-                case 2:
-                    EndGameMessagesEventHandler?.Invoke($"Game is over\nPlayer {winner} won the game!", null);
+                case EndGameType.Player1Won:
+                case EndGameType.Player2Won:
+                    EndGameMessagesEventHandler?.Invoke($"Game is over\nPlayer {(int)winner} won the game!", null);
                     return winner;
-                case 0:
+                case EndGameType.Remis:
                     EndGameMessagesEventHandler?.Invoke("Game is over\nNo one win the game", null);
                     return winner;
                 default:
@@ -83,21 +88,21 @@ namespace TicTacToe.Managers
                 case GameModeType.PlayerVsPlayer:
                     break;
                 case GameModeType.PlayerVsComputer:
-                    _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(1, _gameManagerBoard.Board),
-                                                        _gameManagerBoard.Board);
+                    _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(_gameManagerBoard.Board, EvaluationFunctionType.Easy),
+                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch);
                     break;
                 case GameModeType.ComputerVsComputer:
-                    _playerManager1 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(1, _gameManagerBoard.Board),
-                                                        _gameManagerBoard.Board);
-                    _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(2, _gameManagerBoard.Board),
-                                                        _gameManagerBoard.Board);
+                    _playerManager1 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(_gameManagerBoard.Board, EvaluationFunctionType.Easy),
+                                                        _gameManagerBoard.Board, 1, _winCondition, DepthSearch);
+                    _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(_gameManagerBoard.Board, EvaluationFunctionType.Easy),
+                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch);
                     break;
                 default:
                     break;
             }
         }
 
-        private int ChangePlayer()
+        private EndGameType ChangePlayer()
         {
             _xTurn = !_xTurn;
             _firstPlayerMove = !_firstPlayerMove;
@@ -106,7 +111,7 @@ namespace TicTacToe.Managers
             return MoveIfComputer();
         }
 
-        private int MoveIfComputer()
+        private EndGameType MoveIfComputer()
         {
             switch (_gameMode)
             {
@@ -114,18 +119,18 @@ namespace TicTacToe.Managers
                     EnableBtnsEventHandler?.Invoke(_firstPlayerMove, null);
                     if (!_firstPlayerMove)
                     {
-                        return Move(_playerManager2.NextMove());
+                        return Move(_playerManager2.NextMove(_moves));
                     }
                     break;
                 case GameModeType.ComputerVsComputer:
                     if (_firstPlayerMove)
                     {
-                        return Move(_playerManager1.NextMove());
+                        return Move(_playerManager1.NextMove(_moves));
                     }
-                    return Move(_playerManager2.NextMove());
+                    return Move(_playerManager2.NextMove(_moves));
             }
 
-            return -1;
+            return EndGameType.NotEndYet;
         }
     }
 }
