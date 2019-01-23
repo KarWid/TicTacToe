@@ -124,6 +124,8 @@ namespace TicTacToe.Managers
             var possibleMoves = new List<Point>();
 
             // If gameover, i.e., no next move
+            // zmienic na podstawie ostatniego ruchu, jesli ostatni ruch null,
+            // tzn. ze game manager to sprawdzenie zrobił
             var endGame = BoardHelper.IsEndGame(board, _winCondition, _rows, _columns, moves);
             if (endGame != EndGameType.NotEndYet)
             {
