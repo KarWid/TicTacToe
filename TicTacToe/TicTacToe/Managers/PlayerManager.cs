@@ -80,9 +80,10 @@ namespace TicTacToe.Managers
 
                     var nextNumberPlayer = numberPlayer == 2 ? 1 : 2;
 
+                    score = MinMax(board, depth - 1, !mySeed, alpha, beta, nextNumberPlayer, nextMove).Score;
+
                     if (mySeed) // mySeed (computer) is maximizing player
                     {
-                        score = MinMax(board, depth - 1, !mySeed, alpha, beta, nextNumberPlayer, nextMove).Score;
                         if (score > alpha)
                         {
                             alpha = score;
@@ -92,7 +93,6 @@ namespace TicTacToe.Managers
                     }
                     else // oppSeed is minimizing Player
                     {
-                        score = MinMax(board, depth - 1, !mySeed, alpha, beta, nextNumberPlayer, nextMove).Score;
                         if (score < beta)
                         {
                             beta = score;
