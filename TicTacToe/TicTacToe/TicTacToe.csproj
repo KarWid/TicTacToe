@@ -75,6 +75,8 @@
     <Compile Include="Models\GameManagerBoard.cs" />
     <Compile Include="Models\GameManagerModel.cs" />
     <Compile Include="Models\GameMode.cs" />
+    <Compile Include="Models\MoveResults.cs" />
+    <Compile Include="Models\MoveWeightsResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\MainForm.resx">

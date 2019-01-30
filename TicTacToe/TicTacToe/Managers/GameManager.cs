@@ -17,6 +17,18 @@ namespace TicTacToe.Managers
         private PlayerManager _playerManager2;
         private IEvaluationFunctionFactory _evaluationFunctionFactory;
 
+        private MoveWeightsResult _moveWeightsResult = new MoveWeightsResult
+        {
+            BlockedFivesWeight = 20,
+            BlockedFoursWeight = 3,
+            BlockedThirdsWeight = 2,
+            BlockedTwoWeight = 1,
+            SetFivesWeight = 10,
+            SetFoursWeight = 8,
+            SetThirdsWeight = 4,
+            SetTwoWeight = 2
+        };
+
         public event EventHandler<ChangeBtnTextEventArgs> ChangeBtnTextEventHandler;
         public event EventHandler EnableBtnsEventHandler;
         public event EventHandler EndGameMessagesEventHandler;
@@ -89,13 +101,13 @@ namespace TicTacToe.Managers
                     break;
                 case GameModeType.PlayerVsComputer:
                     _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(_gameManagerBoard.Board, EvaluationFunctionType.Easy),
-                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch);
+                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch, _moveWeightsResult);
                     break;
                 case GameModeType.ComputerVsComputer:
                     _playerManager1 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(_gameManagerBoard.Board, EvaluationFunctionType.Easy),
-                                                        _gameManagerBoard.Board, 1, _winCondition, DepthSearch);
+                                                        _gameManagerBoard.Board, 1, _winCondition, DepthSearch, _moveWeightsResult);
                     _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(_gameManagerBoard.Board, EvaluationFunctionType.Easy),
-                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch);
+                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch, _moveWeightsResult);
                     break;
                 default:
                     break;

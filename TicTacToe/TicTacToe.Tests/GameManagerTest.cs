@@ -26,7 +26,7 @@ namespace TicTacToe.Tests
                 WinCondition = 5,
                 BoardLength = 100,
                 XFirst = true,
-                DepthSearch = 3
+                DepthSearch = 1
             };
 
             results.Add(-1, 0);
