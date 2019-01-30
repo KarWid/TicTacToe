@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using TicTacToe.Enums;
 using TicTacToe.Helpers;
 using TicTacToe.Infrastructure.EvaluationFunctions.Abstract;
 using TicTacToe.Models;
@@ -44,7 +43,7 @@ namespace TicTacToe.Managers
         {
             var localBoard = (int[,])_board.Clone();
 
-            var result = MinMax(localBoard, _depthSearch, true, Int32.MinValue, Int32.MaxValue, _numberPlayer, null);
+            var result = MinMax(localBoard, _depthSearch, true, Int32.MinValue, Int32.MaxValue, _numberPlayer, new List<Point>());
 
             return result.Position;
         }
@@ -53,9 +52,16 @@ namespace TicTacToe.Managers
         /// Minimax (recursive) at level of depth for maximizing or minimizing player with alpha-beta cut-off
         /// </summary>
         /// <returns>MinIMaxModel with score and best position</returns>
-        private MinIMaxModel MinMax(int[,] board, int depth, bool mySeed, int alpha, int beta, int numberPlayer, Point? lastMove)
+        private MinIMaxModel MinMax(int[,] board, int depth, bool mySeed, int alpha, int beta, int numberPlayer, List<Point> moves)
         {
-            var nextMoves = GenerateMoves(board, lastMove, numberPlayer);
+            Point? lastMove = null;
+
+            if (moves.Count > 0)
+            {
+                lastMove = moves[moves.Count - 1];
+            }
+
+            var nextMoves = GenerateMoves(board, lastMove , numberPlayer);
 
             // mySeed is maximizing; while oppSeed is minimizing
             int score;
@@ -64,7 +70,7 @@ namespace TicTacToe.Managers
 
             if (nextMoves.Count == 0 || depth == 0)
             {
-                score = _evaluationFunction.Evaluate(board, _winCondition, _rows, _columns, lastMove, numberPlayer, _moveWeightsResult);
+                score = _evaluationFunction.Evaluate(board, _winCondition, _rows, _columns, moves, _numberPlayer, _moveWeightsResult);
                 return new MinIMaxModel
                 {
                     Position = new Point(bestRow, bestCol),
@@ -80,7 +86,9 @@ namespace TicTacToe.Managers
 
                     var nextNumberPlayer = numberPlayer == 2 ? 1 : 2;
 
-                    score = MinMax(board, depth - 1, !mySeed, alpha, beta, nextNumberPlayer, nextMove).Score;
+                    moves.Add(nextMove);
+
+                    score = MinMax(board, depth - 1, !mySeed, alpha, beta, nextNumberPlayer, moves).Score;
 
                     if (mySeed) // mySeed (computer) is maximizing player
                     {
@@ -103,11 +111,7 @@ namespace TicTacToe.Managers
 
                     // undo move
                     board[nextMove.X, nextMove.Y] = 0;
-
-                    if (alpha > beta)
-                    {
-                        throw new Exception("alpha > beta");
-                    }
+                    moves.Remove(nextMove);
                 });
 
                 return new MinIMaxModel
