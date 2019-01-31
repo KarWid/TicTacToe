@@ -74,11 +74,8 @@ namespace TicTacToe.Managers
             {
                 for (int i=0; i < nextMoves.Count; i++)
                 {
+                    var nextMove = nextMoves[i];
 
-                }
-
-                nextMoves.ForEach(nextMove =>
-                {
                     // try this move for the current "player"
                     board[nextMove.X, nextMove.Y] = numberPlayer;
                     moves.Add(nextMove);
@@ -109,7 +106,12 @@ namespace TicTacToe.Managers
                     // undo move
                     board[nextMove.X, nextMove.Y] = 0;
                     moves.Remove(nextMove);
-                });
+
+                    if (beta < alpha)
+                    {
+                        break;
+                    }
+                }
 
                 return new MinIMaxModel
                 {
