@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TicTacToe.Enums;
 using TicTacToe.Infrastructure.EvaluationFunctions.Concrete;
@@ -72,7 +73,7 @@ namespace TicTacToe.Tests
                              $"Liczba gier zakończonych remisem: {results[0]}\n" +
                              $"Defensywny. Gracz wygrał {results[1]} gier\nOfensywny. Gracz wygrał {results[2]} gier.";
 
-            Assert.AreEqual(0, -1, message);
+            Console.WriteLine(message);
         }
     }
 }
