@@ -17,17 +17,8 @@ namespace TicTacToe.Managers
         private PlayerManager _playerManager2;
         private IEvaluationFunctionFactory _evaluationFunctionFactory;
 
-        private MoveWeightsResult _moveWeightsResult = new MoveWeightsResult
-        {
-            BlockedFivesWeight = 20,
-            BlockedFoursWeight = 3,
-            BlockedThirdsWeight = 2,
-            BlockedTwoWeight = 1,
-            SetFivesWeight = 10,
-            SetFoursWeight = 8,
-            SetThirdsWeight = 4,
-            SetTwoWeight = 2
-        };
+        private MoveWeightsResult _moveWeightsResultPlayer1;
+        private MoveWeightsResult _moveWeightsResultPlayer2;
 
         public event EventHandler<ChangeBtnTextEventArgs> ChangeBtnTextEventHandler;
         public event EventHandler EnableBtnsEventHandler;
@@ -47,7 +38,10 @@ namespace TicTacToe.Managers
             _boardLength = model.BoardLength;
 
             _gameManagerBoard = new GameManagerBoard(model.Rows, model.Columns);
-            _evaluationFunctionFactory = model.EvalutaionFunctionFactory;
+            _evaluationFunctionFactory = model.EvaluationFunctionFactory;
+
+            _moveWeightsResultPlayer1 = model.MoveWeightsResultPlayer1;
+            _moveWeightsResultPlayer2 = model.MoveWeightsResultPlayer2;
 
             DepthSearch = model.DepthSearch;
 
@@ -101,13 +95,13 @@ namespace TicTacToe.Managers
                     break;
                 case GameModeType.PlayerVsComputer:
                     _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(_gameManagerBoard.Board, EvaluationFunctionType.Easy),
-                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch, _moveWeightsResult);
+                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch, _moveWeightsResultPlayer2);
                     break;
                 case GameModeType.ComputerVsComputer:
                     _playerManager1 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(_gameManagerBoard.Board, EvaluationFunctionType.Easy),
-                                                        _gameManagerBoard.Board, 1, _winCondition, DepthSearch, _moveWeightsResult);
+                                                        _gameManagerBoard.Board, 1, _winCondition, DepthSearch, _moveWeightsResultPlayer1);
                     _playerManager2 = new PlayerManager(_evaluationFunctionFactory.GetEvaluationFunction(_gameManagerBoard.Board, EvaluationFunctionType.Easy),
-                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch, _moveWeightsResult);
+                                                        _gameManagerBoard.Board, 2, _winCondition, DepthSearch, _moveWeightsResultPlayer2);
                     break;
                 default:
                     break;

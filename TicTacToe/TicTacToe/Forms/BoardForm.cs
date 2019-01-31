@@ -16,6 +16,9 @@ namespace TicTacToe.Forms
         private Button[,] _board;
         private GameManager _gameManager;
         private GameModeType _gameMode;
+        MoveWeightsResult _moveWeightsResultPlayer1;
+        MoveWeightsResult _moveWeightsResultPlayer2;
+        private Color _defaultButtonBackColor;
 
         private int _rows, _columns, _depthSearch;
 
@@ -24,7 +27,8 @@ namespace TicTacToe.Forms
             InitializeComponent();
         }
 
-        public BoardForm(GameModeType gameMode, int rows, int columns, int depthSearch)
+        public BoardForm(GameModeType gameMode, int rows, int columns, int depthSearch, 
+                         MoveWeightsResult moveWeightsResultPlayer1, MoveWeightsResult moveWeightsResultPlayer2)
         {
             InitializeComponent();
 
@@ -34,6 +38,8 @@ namespace TicTacToe.Forms
             _rows = rows;
             _columns = columns;
             _depthSearch = depthSearch;
+            _moveWeightsResultPlayer1 = moveWeightsResultPlayer1;
+            _moveWeightsResultPlayer2 = moveWeightsResultPlayer2;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -79,6 +85,8 @@ namespace TicTacToe.Forms
 
                 this.Controls.Add(button);
             }
+
+            _defaultButtonBackColor = _board[0, 0].BackColor;
         }
 
         private void InitializeGameManager(Button[,] board)
@@ -93,13 +101,15 @@ namespace TicTacToe.Forms
             var model = new GameManagerModel
             {
                 GameMode = _gameMode,
-                EvalutaionFunctionFactory = factory,
+                EvaluationFunctionFactory = factory,
                 Rows = _rows,
                 Columns = _columns,
                 WinCondition = WIN_CONDITION,
                 BoardLength = board.Length,
                 XFirst = X_FIRST,
-                DepthSearch = _depthSearch
+                DepthSearch = _depthSearch,
+                MoveWeightsResultPlayer1 = _moveWeightsResultPlayer1,
+                MoveWeightsResultPlayer2 = _moveWeightsResultPlayer2
             };
 
             _gameManager = new GameManager(model);
@@ -156,7 +166,18 @@ namespace TicTacToe.Forms
 
         private void ChangeButtonText(object sender, ChangeBtnTextEventArgs e)
         {
+            var button = _board[e.Position.X, e.Position.Y];
+
+            for (int i = 0; i < _rows; i++)
+            {
+                for (int j = 0; j < _columns; j++)
+                {
+                    _board[i, j].BackColor = _defaultButtonBackColor;
+                }
+            }
+
             _board[e.Position.X, e.Position.Y].Text = e.Content;
+            _board[e.Position.X, e.Position.Y].BackColor = Color.Yellow;
         }
 
         private void GameManagerEndGameMessages(object sender, EventArgs e)

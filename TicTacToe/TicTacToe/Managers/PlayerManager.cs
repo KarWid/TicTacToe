@@ -7,13 +7,6 @@ using TicTacToe.Models;
 
 namespace TicTacToe.Managers
 {
-    //http://snipd.net/minimax-algorithm-with-alpha-beta-pruning-in-c
-    /*
-        1. Rozkminic alfa-beta, czy jest ok inicjalizacja, czy mySeed powinien byc true czy false
-        2. Usunac sprawdzenie całej planszy co kazdy generateMoves, wrzucić tam na przykład ostatni ruch, 
-           a jeśli null to nie sprawdzać, bo to pierwsze wywołanie, a jeśli tak to gameManager juz o to zadbał
-        3. Zmienić interfejs IEvaluationFunction na taki, który zależałby od wykonanego ostatniego ruchu i całej tablicy
-    */
     public class PlayerManager
     {
         private int[,] _board; // values: 0 - empty field, 1 - first player's field, 2 - second player's field
@@ -79,14 +72,18 @@ namespace TicTacToe.Managers
             }
             else
             {
+                for (int i=0; i < nextMoves.Count; i++)
+                {
+
+                }
+
                 nextMoves.ForEach(nextMove =>
                 {
                     // try this move for the current "player"
                     board[nextMove.X, nextMove.Y] = numberPlayer;
+                    moves.Add(nextMove);
 
                     var nextNumberPlayer = numberPlayer == 2 ? 1 : 2;
-
-                    moves.Add(nextMove);
 
                     score = MinMax(board, depth - 1, !mySeed, alpha, beta, nextNumberPlayer, moves).Score;
 
